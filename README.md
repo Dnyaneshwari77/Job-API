@@ -1,7 +1,7 @@
 #### Setup
 
 ```bash
-npm install && npm start
+npm install && nodemon app.js
 ```
 
 #### Database Connection
@@ -48,22 +48,169 @@ Email Validation Regex
 - Duplicate (Email)
 - Cast Error
 
-#### Security
 
-- helmet
-- cors
-- xss-clean
-- express-rate-limit
+# Job Management API
 
-Swagger UI
+A job management backend built with **Node.js**, **Express.js**, and **MongoDB**. This RESTful API allows users to register, login, and perform full CRUD operations on job entries they create. JWT is used for secure user authentication.
 
-```yaml
-/jobs/{id}:
-  parameters:
-    - in: path
-      name: id
-      schema:
-        type: string
-      required: true
-      description: the job id
+---
+
+## 🚀 Tech Stack
+
+- Node.js
+- Express.js
+- MongoDB (Mongoose)
+- JWT (JSON Web Token)
+- bcrypt.js
+- dotenv
+
+---
+
+## 📁 Project Setup
+
+### Prerequisites
+
+- Node.js installed
+- MongoDB instance (local or MongoDB Atlas)
+
+### Installation
+
+```bash
+git clone https://github.com/Dnyaneshwari77/Job-API.git
+npm install
 ```
+
+### Environment Variables
+
+Create a `.env` file in the root directory and add:
+
+```env
+PORT=5000
+MONGO_URI=your_mongo_connection_string
+JWT_SECRET=your_jwt_secret
+JWT_LIFETIME=1d
+```
+
+---
+
+## 🔐 User Schema
+
+```js
+{
+  name: String,
+  email: String,
+  password: String (Hashed),
+}
+```
+
+## 📄 Job Schema
+
+```js
+{
+  company: String,
+  position: String,
+  status: "interview" | "declined" | "pending", // default: pending
+  createdBy: ObjectId (ref to User),
+}
+```
+
+---
+
+## 📌 API Endpoints
+
+### 👤 Auth Routes
+
+#### `POST /api/v1/aut/register`
+
+- Register a user
+- Request Body:
+```json
+{
+  "name": "John",
+  "email": "john@example.com",
+  "password": "123456"
+}
+```
+
+#### `POST /api/v1/aut/login`
+
+- Login and receive a JWT
+- Request Body:
+```json
+{
+  "email": "john@example.com",
+  "password": "123456"
+}
+```
+
+- Response:
+```json
+{
+  "user": {
+    "_id": "...",
+    "name": "John"
+  },
+  "token": "..."
+}
+```
+
+---
+
+### 💼 Job Routes *(Require Authorization)*
+
+All job routes require an `Authorization` header:
+```
+Bearer <your_token>
+```
+
+#### `GET /api/v1/job`
+
+- Get all jobs
+- Optional Query Params:
+  - `status` (interview, pending, declined)
+  - `createdBy` (user ID)
+
+#### `GET /api/v1/job/:id`
+
+- Get a job by ID
+
+#### `POST /api/v1/job`
+
+- Create a new job
+- Request Body:
+```json
+{
+  "company": "TCS",
+  "position": "Backend Developer"
+}
+```
+
+#### `PATCH /api/v1/job/:id`
+
+- Update a job (company/position/status)
+
+#### `DELETE /api/v1/job/:id`
+
+- Delete a job
+
+---
+
+## ▶️ Run the Server
+
+```bash
+nodemon app.js
+```
+
+---
+
+## 👩‍💻 Author
+
+**Dnyaneshwari Pandhare**
+
+GitHub: [@Dnyaneshwari77](https://github.com/Dnyaneshwari77)
+
+---
+
+## 📄 License
+
+MIT License
